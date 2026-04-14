@@ -1,51 +1,174 @@
 import { Link } from "react-router-dom";
-import { nutrients, foods } from "@/data/nutrients";
-import { useTrackingStore } from "@/store/trackingStore";
+import { nutrients, calculateCaloriesRequirement } from "@/data/nutrients";
+import { useTrackingStore, type HistoryEntry } from "@/store/trackingStore";
+import { CheckCircle2, History, Save } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { useEffect } from "react";
+import { supabase } from "@/lib/supabaseClient";
+import { format } from "date-fns";
+import { CaloriesProgress } from "@/components/CaloriesProgress";
 
 const Dashboard = () => {
-  const foodLog = useTrackingStore((s) => s.foodLog);
+  const getNutrientTotal = useTrackingStore((s) => s.getNutrientTotal);
+  const getNutrientRequirement = useTrackingStore((s) => s.getNutrientRequirement);
+  const getCaloriesTotal = useTrackingStore((s) => s.getCaloriesTotal);
+  const userProfile = useTrackingStore((s) => s.userProfile);
+  const foodQuantities = useTrackingStore((s) => s.foodQuantities);
+  const saveDay = useTrackingStore((s) => s.saveDay);
+  const setHistory = useTrackingStore((s) => s.setHistory);
+  const hasProgress = Object.values(foodQuantities).some((q) => q > 0);
+  useEffect(() => {
 
-  const getNutrientCurrent = (nutrientId: string) => {
-    let total = 0;
-    for (const food of foods) {
-      const qty = foodLog[food.id] ?? 0;
-      total += (food.nutrients[nutrientId] ?? 0) * qty;
+    async function loadHistoryFromSupabase() {
+
+      const { data: userData } = await supabase.auth.getUser();
+
+      if (!userData.user) return;
+
+      const { data, error } = await supabase
+
+        .from("history")
+
+        .select("*")
+
+        .eq("user_id", userData.user.id)
+
+        .order("date", { ascending: false });
+
+      if (error) {
+
+        console.error(error);
+
+        return;
+
+      }
+
+      if (data) {
+
+        const formattedHistory: HistoryEntry[] = data.map(item => ({
+          userId: item.user_id,
+          dateKey: item.date_key || format(new Date(item.date), "yyyy-MM-dd"),
+          date: new Date(item.date).toLocaleDateString("en-GB", {
+            day: "numeric",
+            month: "short",
+            year: "numeric"
+          }),
+          nutrients: item.nutrient_totals,
+          foods: item.foods || {}
+        }));
+
+        setHistory(formattedHistory);
+
+      }
+
     }
-    return total;
-  };
 
+    loadHistoryFromSupabase();
+
+  }, []);
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-8 py-10">
-      <h1 className="font-serif text-3xl font-semibold text-foreground mb-8">
-        Dashboard
-      </h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-        {nutrients.map((n) => {
-          const current = getNutrientCurrent(n.id);
-          const pct = Math.min((current / n.dailyRequired) * 100, 100);
+    <div className="max-w-6xl mx-auto px-4 md:px-8 py-10 pb-20">
+      <div className="mb-10 text-center md:text-left">
+        <h1 className="font-serif text-3xl font-semibold text-foreground">
+          Your Progress
+        </h1>
+        <p className="text-muted-foreground font-sans mt-1">
+          Tracking your daily micronutrient intake for optimal health.
+        </p>
+      </div>
+
+      <CaloriesProgress
+        current={getCaloriesTotal()}
+        required={calculateCaloriesRequirement(userProfile)}
+      />
+
+      {!hasProgress && (
+        <div className="mb-10 py-10 bg-card border border-border border-dashed text-center">
+          <p className="text-muted-foreground font-sans">
+            Start adding foods to track your nutrient intake.
+          </p>
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-16">
+        {nutrients.filter(n => n.id !== "calories").map((n) => {
+          const current = getNutrientTotal(n.id);
+          const required = getNutrientRequirement(n.id);
+          const pct = required > 0 ? Math.min((current / required) * 100, 100) : 0;
+          const isCompleted = required > 0 && current >= required;
+
           return (
             <Link
               key={n.id}
               to={`/nutrient/${n.id}`}
-              className="bg-card border border-border p-5 transition-colors hover:border-foreground/20 block"
+              className="bg-card border border-border p-5 transition-all hover:shadow-md hover:border-foreground/20 group relative overflow-hidden"
             >
-              <h3 className="font-serif text-lg font-semibold text-card-foreground mb-1">
-                {n.name}
-              </h3>
-              <p className="font-sans text-sm text-muted-foreground mb-3">
-                {formatNum(current)}
-                {n.unit} / {formatNum(n.dailyRequired)}
-                {n.unit}
-              </p>
-              <div className="h-1.5 bg-progress-track w-full">
+              <div className="flex justify-between items-start mb-4">
+                <div className="flex items-center gap-1.5">
+                  <h3 className="font-serif text-lg font-semibold text-card-foreground">
+                    {n.name}
+                  </h3>
+                  {isCompleted && (
+                    <CheckCircle2 size={16} className="text-primary/70" />
+                  )}
+                </div>
+                <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-sans font-bold opacity-0 group-hover:opacity-100 transition-opacity">
+                  View Detail
+                </span>
+              </div>
+
+              <div className="mb-4">
+                <p className="font-sans text-xl font-medium text-foreground flex items-center gap-1">
+                  {formatNum(current)}
+                  <span className="text-muted-foreground text-xs font-normal">
+                    / {formatNum(required)}{n.unit}
+                  </span>
+                  {isCompleted && (
+                    <span className="text-[10px] font-sans font-bold uppercase tracking-tighter text-primary/70 ml-1">
+                      ✓
+                    </span>
+                  )}
+                </p>
+              </div>
+
+              <div className="h-1 bg-progress-track w-full overflow-hidden">
                 <div
-                  className="h-full bg-progress transition-all duration-700 ease-out"
+                  className={`h-full transition-all duration-700 ease-out ${isCompleted ? "bg-[#2d4a6a]" : "bg-progress"
+                    }`}
                   style={{ width: `${pct}%` }}
                 />
               </div>
+
+              {/* Subtle background highlight for completed state */}
+              {isCompleted && (
+                <div className="absolute top-0 right-0 w-8 h-8 bg-primary/5 rounded-bl-full pointer-events-none" />
+              )}
             </Link>
           );
         })}
+      </div>
+
+      <div className="flex flex-col sm:flex-row items-center justify-center gap-4 border-t border-border pt-12">
+        <Button
+          variant="hero"
+          size="lg"
+          onClick={async () => await saveDay()}
+          className="min-w-[180px] group"
+          disabled={!hasProgress}
+        >
+          <Save size={18} className="mr-2 group-hover:scale-110 transition-transform" />
+          Save Day
+        </Button>
+        <Link to="/history">
+          <Button
+            variant="outline"
+            size="lg"
+            className="min-w-[180px] border-primary/20 text-primary hover:bg-primary/5"
+          >
+            <History size={18} className="mr-2" />
+            View History
+          </Button>
+        </Link>
       </div>
     </div>
   );
@@ -54,3 +177,5 @@ const Dashboard = () => {
 const formatNum = (n: number) => (Number.isInteger(n) ? n : n.toFixed(1));
 
 export default Dashboard;
+
+

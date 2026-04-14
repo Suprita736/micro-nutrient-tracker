@@ -2,7 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useTrackingStore } from "@/store/trackingStore";
-
+import { COUNTRIES } from "@/data/nutrients";
+import { supabase } from "@/lib/supabaseClient";
 const activityLevels = [
   "Sedentary",
   "Light activity",
@@ -20,8 +21,10 @@ const Onboarding = () => {
   const [name, setName] = useState("");
   const [age, setAge] = useState("");
   const [weight, setWeight] = useState("");
+  const [height, setHeight] = useState("");
   const [gender, setGender] = useState("");
   const [activityLevel, setActivityLevel] = useState("");
+  const [country, setCountry] = useState("");
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const validate = () => {
@@ -31,23 +34,56 @@ const Onboarding = () => {
     if (!age || ageNum < 1 || ageNum > 120) e.age = "Age must be 1–120";
     const weightNum = Number(weight);
     if (!weight || weightNum < 20 || weightNum > 300) e.weight = "Weight must be 20–300 kg";
+    const heightNum = Number(height);
+    if (!height || heightNum < 120 || heightNum > 220) e.height = "Height must be 120–220 cm";
     if (!gender) e.gender = "Select a gender";
     if (!activityLevel) e.activityLevel = "Select activity level";
+    if (!country) e.country = "Select your country";
     setErrors(e);
     return Object.keys(e).length === 0;
   };
 
-  const handleSubmit = (ev: React.FormEvent) => {
+  const handleSubmit = async (ev: React.FormEvent) => {
     ev.preventDefault();
     if (!validate()) return;
-    setUserProfile({
+
+    const reset = useTrackingStore.getState().reset;
+    reset();
+
+    // get logged in user from supabase
+    const { data } = await supabase.auth.getUser();
+
+    if (!data.user) return; // Add simple safeguard
+
+    const newProfile = {
+      id: data.user.id,
+      email: data.user.email,
       name: name.trim(),
       age: Number(age),
       weight: Number(weight),
-      gender,
+      height: Number(height),
+      gender: gender as "Male" | "Female" | "Other",
       activityLevel,
+      country,
+    };
+
+    // save profile locally (zustand)
+    useTrackingStore.getState().setUserProfile(newProfile);
+
+    // save profile in supabase database
+    await supabase.from("profiles").upsert({
+      id: data.user.id,
+      email: data.user.email,
+      name: name.trim(),
+      age: Number(age),
+      weight: Number(weight),
+      height: Number(height),
+      gender,
+      activity_level: activityLevel,
+      country
     });
-    navigate("/dashboard");
+
+    navigate("/dashboard", { replace: true });
   };
 
   const inputClass =
@@ -93,6 +129,17 @@ const Onboarding = () => {
               placeholder="65"
             />
           </Field>
+          <Field label="Height (cm)" error={errors.height}>
+            <input
+              type="number"
+              value={height}
+              onChange={(e) => setHeight(e.target.value)}
+              className={inputClass}
+              min={120}
+              max={220}
+              placeholder="170"
+            />
+          </Field>
           <Field label="Gender" error={errors.gender}>
             <select value={gender} onChange={(e) => setGender(e.target.value)} className={selectClass}>
               <option value="">Select</option>
@@ -106,6 +153,14 @@ const Onboarding = () => {
               <option value="">Select</option>
               {activityLevels.map((a) => (
                 <option key={a} value={a}>{a}</option>
+              ))}
+            </select>
+          </Field>
+          <Field label="Country" error={errors.country}>
+            <select value={country} onChange={(e) => setCountry(e.target.value)} className={selectClass}>
+              <option value="">Select country</option>
+              {COUNTRIES.map((c) => (
+                <option key={c} value={c}>{c}</option>
               ))}
             </select>
           </Field>

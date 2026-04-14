@@ -13,7 +13,7 @@ const Landing = () => {
         <p className="text-muted-foreground font-sans text-lg md:text-xl max-w-md mx-auto mb-10">
           Track your daily micronutrient goals with precision.
         </p>
-        <Button variant="hero" size="lg" onClick={() => navigate("/onboarding")}>
+        <Button variant="hero" size="lg" onClick={() => navigate("/login")}>
           Get Started
         </Button>
       </div>
