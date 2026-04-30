@@ -7,7 +7,7 @@ import { useEffect } from "react";
 import { supabase } from "@/lib/supabaseClient";
 import { format } from "date-fns";
 import { CaloriesProgress } from "@/components/CaloriesProgress";
-
+import { SmartFoodLogger } from "@/components/smart-logging/SmartFoodLogger";
 const Dashboard = () => {
   const getNutrientTotal = useTrackingStore((s) => s.getNutrientTotal);
   const getNutrientRequirement = useTrackingStore((s) => s.getNutrientRequirement);
@@ -17,6 +17,7 @@ const Dashboard = () => {
   const saveDay = useTrackingStore((s) => s.saveDay);
   const setHistory = useTrackingStore((s) => s.setHistory);
   const hasProgress = Object.values(foodQuantities).some((q) => q > 0);
+
   useEffect(() => {
 
     async function loadHistoryFromSupabase() {
@@ -81,6 +82,8 @@ const Dashboard = () => {
         current={getCaloriesTotal()}
         required={calculateCaloriesRequirement(userProfile)}
       />
+
+      <SmartFoodLogger />
 
       {!hasProgress && (
         <div className="mb-10 py-10 bg-card border border-border border-dashed text-center">

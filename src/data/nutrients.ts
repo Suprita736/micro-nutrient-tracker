@@ -33,15 +33,34 @@ export interface UserProfile {
 }
 
 export const nutrients: NutrientInfo[] = [
+  { id: "carbs", name: "Carbs", unit: "g", baseRequired: 275 },
   { id: "calories", name: "Calories", unit: "kcal" },
   { id: "protein", name: "Protein", unit: "g" }, // Dynamic check
-  { id: "fiber", name: "Fiber", unit: "g", femaleRequired: 25, maleRequired: 38 },
+  {
+    id: "fiber",
+    name: "Fiber",
+    unit: "g",
+    femaleRequired: 25,
+    maleRequired: 38,
+  },
   { id: "iron", name: "Iron", unit: "mg", femaleRequired: 18, maleRequired: 8 },
   { id: "calcium", name: "Calcium", unit: "mg", baseRequired: 1000 },
-  { id: "magnesium", name: "Magnesium", unit: "mg", femaleRequired: 310, maleRequired: 400 },
+  {
+    id: "magnesium",
+    name: "Magnesium",
+    unit: "mg",
+    femaleRequired: 310,
+    maleRequired: 400,
+  },
   { id: "zinc", name: "Zinc", unit: "mg", femaleRequired: 8, maleRequired: 11 },
   { id: "vitaminB12", name: "Vitamin B12", unit: "mcg", baseRequired: 2.4 },
-  { id: "omega3", name: "Omega 3", unit: "g", femaleRequired: 1.1, maleRequired: 1.6 },
+  {
+    id: "omega3",
+    name: "Omega 3",
+    unit: "g",
+    femaleRequired: 1.1,
+    maleRequired: 1.6,
+  },
   { id: "selenium", name: "Selenium", unit: "mcg", baseRequired: 55 },
   { id: "vitaminD", name: "Vitamin D", unit: "mcg", baseRequired: 15 },
   { id: "vitaminC", name: "Vitamin C", unit: "mg", baseRequired: 90 },
@@ -63,7 +82,17 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 80,
     regionTags: ["global"],
     calories: 150,
-    nutrients: { protein: 5, fiber: 4, iron: 1.5, magnesium: 40, zinc: 1.1, selenium: 8, folate: 14, potassium: 150 },
+    nutrients: {
+      protein: 5,
+      fiber: 4,
+      iron: 1.5,
+      magnesium: 40,
+      zinc: 1.1,
+      selenium: 8,
+      folate: 14,
+      potassium: 150,
+      carbs: 26,
+    },
   },
   {
     id: "protein_powder",
@@ -79,8 +108,9 @@ export const foods: FoodItem[] = [
       magnesium: 30,
       zinc: 0.9,
       selenium: 10,
-      potassium: 150
-    }
+      potassium: 150,
+      carbs: 2,
+    },
   },
   {
     id: "pomegranate",
@@ -96,8 +126,9 @@ export const foods: FoodItem[] = [
       vitaminC: 10,
       potassium: 236,
       folate: 38,
-      magnesium: 12
-    }
+      magnesium: 12,
+      carbs: 17,
+    },
   },
   {
     id: "kiwi",
@@ -113,8 +144,9 @@ export const foods: FoodItem[] = [
       vitaminC: 92,
       potassium: 312,
       folate: 25,
-      magnesium: 17
-    }
+      magnesium: 17,
+      carbs: 15,
+    },
   },
   {
     id: "dark_chocolate",
@@ -132,8 +164,9 @@ export const foods: FoodItem[] = [
       zinc: 0.9,
       selenium: 2,
       potassium: 230,
-      vitaminE: 0.6
-    }
+      vitaminE: 0.6,
+      carbs: 8,
+    },
   },
   {
     id: "pumpkin_seeds",
@@ -145,14 +178,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 110,
     nutrients: {
-      protein: 7,
+      protein: 4,
       magnesium: 150,
       zinc: 2.2,
       iron: 2.5,
       fiber: 2,
       potassium: 230,
-      vitaminE: 2
-    }
+      vitaminE: 2,
+      carbs: 11,
+    },
   },
   {
     id: "sardines",
@@ -170,7 +204,7 @@ export const foods: FoodItem[] = [
       vitaminB12: 8.9,
       selenium: 45,
       zinc: 1.3
-    }
+    },
   },
   {
     id: "sunflower_seeds",
@@ -185,11 +219,12 @@ export const foods: FoodItem[] = [
       magnesium: 80,
       zinc: 1.5,
       selenium: 15,
-      protein: 6,
+      protein: 4,
       fiber: 2.5,
       vitaminE: 7,
-      folate: 65
-    }
+      folate: 65,
+      carbs: 4,
+    },
   },
   {
     id: "egg",
@@ -200,7 +235,15 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 3,
     regionTags: ["global"],
     calories: 70,
-    nutrients: { protein: 6, vitaminB12: 0.6, vitaminD: 1, selenium: 15, zinc: 0.6, calcium: 28, vitaminA: 80 },
+    nutrients: {
+      protein: 6,
+      vitaminB12: 0.6,
+      vitaminD: 1,
+      selenium: 15,
+      zinc: 0.6,
+      calcium: 28,
+      vitaminA: 80,
+    },
   },
   {
     id: "milk",
@@ -212,8 +255,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 150,
     nutrients: {
-      protein: 8, calcium: 300, vitaminB12: 1.2, vitaminD: 2.5, magnesium: 27, zinc: 1, potassium: 322,
-      vitaminA: 68
+      protein: 8,
+      calcium: 300,
+      vitaminB12: 1.2,
+      vitaminD: 2.5,
+      magnesium: 27,
+      zinc: 1,
+      potassium: 322,
+      vitaminA: 68,
+      carbs: 12,
     },
   },
   {
@@ -225,7 +275,19 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 100,
     regionTags: ["global"],
     calories: 23,
-    nutrients: { iron: 2.7, calcium: 99, magnesium: 79, fiber: 2.2, zinc: 0.5, folate: 194, vitaminA: 469, vitaminC: 28, potassium: 558, vitaminE: 2 },
+    nutrients: {
+      iron: 2.7,
+      calcium: 99,
+      magnesium: 79,
+      fiber: 2.2,
+      zinc: 0.5,
+      folate: 194,
+      vitaminA: 469,
+      vitaminC: 28,
+      potassium: 558,
+      vitaminE: 2,
+      carbs: 3.6,
+    },
   },
   {
     id: "banana",
@@ -243,6 +305,7 @@ export const foods: FoodItem[] = [
       potassium: 422,
       vitaminC: 10,
       vitaminA: 3,
+      carbs: 27,
     },
   },
   {
@@ -260,7 +323,7 @@ export const foods: FoodItem[] = [
       vitaminB12: 1.1,
       zinc: 1.3,
       magnesium: 35
-    }
+    },
   },
   {
     id: "blueberries",
@@ -278,8 +341,9 @@ export const foods: FoodItem[] = [
       zinc: 0.2,
       vitaminC: 9,
       vitaminA: 3,
-      potassium: 77
-    }
+      potassium: 77,
+      carbs: 10.5,
+    },
   },
   {
     id: "strawberries",
@@ -297,8 +361,9 @@ export const foods: FoodItem[] = [
       iron: 0.4,
       vitaminC: 59,
       folate: 24,
-      potassium: 153
-    }
+      potassium: 153,
+      carbs: 7.7,
+    },
   },
   {
     id: "apple",
@@ -310,8 +375,12 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 95,
     nutrients: {
-      fiber: 3.5, magnesium: 9, iron: 0.2, vitaminC: 5,
-      potassium: 195
+      fiber: 3.5,
+      magnesium: 9,
+      iron: 0.2,
+      vitaminC: 5,
+      potassium: 195,
+      carbs: 25,
     },
   },
   {
@@ -324,8 +393,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 115,
     nutrients: {
-      protein: 5, fiber: 3, magnesium: 60, calcium: 60, zinc: 0.7, selenium: 1, vitaminE: 7,
-      folate: 14
+      protein: 4,
+      fiber: 3,
+      magnesium: 60,
+      calcium: 60,
+      zinc: 0.7,
+      selenium: 1,
+      vitaminE: 7,
+      folate: 14,
+      carbs: 4.3,
     },
   },
   {
@@ -338,8 +414,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 130,
     nutrients: {
-      protein: 4, fiber: 2, omega3: 2.6, magnesium: 40, zinc: 0.9, vitaminE: 0.7,
-      folate: 28
+      protein: 4,
+      fiber: 2,
+      omega3: 2.6,
+      magnesium: 40,
+      zinc: 0.9,
+      vitaminE: 0.7,
+      folate: 28,
+      carbs: 2.7,
     },
   },
   {
@@ -352,8 +434,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 170,
     nutrients: {
-      protein: 8, fiber: 2.5, magnesium: 50, zinc: 1, selenium: 3, folate: 68,
-      vitaminE: 2
+      protein: 8,
+      fiber: 2.5,
+      magnesium: 50,
+      zinc: 1,
+      selenium: 3,
+      folate: 68,
+      vitaminE: 2,
+      carbs: 4.8,
     },
   },
   {
@@ -365,7 +453,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["global"],
     calories: 165,
-    nutrients: { protein: 25, vitaminB12: 0.3, selenium: 27, zinc: 1, magnesium: 30, potassium: 256 },
+    nutrients: {
+      protein: 25,
+      vitaminB12: 0.3,
+      selenium: 27,
+      zinc: 1,
+      magnesium: 30,
+      potassium: 256
+    },
   },
   {
     id: "salmon",
@@ -376,7 +471,15 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["global"],
     calories: 208,
-    nutrients: { protein: 20, omega3: 1.8, vitaminD: 11, vitaminB12: 3.2, selenium: 36, magnesium: 29, vitaminE: 2 },
+    nutrients: {
+      protein: 20,
+      omega3: 1.8,
+      vitaminD: 11,
+      vitaminB12: 3.2,
+      selenium: 36,
+      magnesium: 29,
+      vitaminE: 2
+    },
   },
   {
     id: "tuna",
@@ -387,7 +490,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["global"],
     calories: 130,
-    nutrients: { protein: 23, vitaminD: 4, vitaminB12: 2.1, selenium: 90, omega3: 1.2, vitaminE: 1 },
+    nutrients: {
+      protein: 23,
+      vitaminD: 4,
+      vitaminB12: 2.1,
+      selenium: 90,
+      omega3: 1.2,
+      vitaminE: 1
+    },
   },
   {
     id: "tofu",
@@ -399,8 +509,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global", "asia"],
     calories: 144,
     nutrients: {
-      protein: 8, calcium: 230, iron: 3.6, magnesium: 20, zinc: 0.7, potassium: 121,
-      folate: 27
+      protein: 8,
+      calcium: 230,
+      iron: 3.6,
+      magnesium: 20,
+      zinc: 0.7,
+      potassium: 121,
+      folate: 27,
+      carbs: 1.9,
     },
   },
   {
@@ -413,8 +529,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 110,
     nutrients: {
-      protein: 3, fiber: 1.8, magnesium: 44, zinc: 0.6, selenium: 5, folate: 9,
-      potassium: 79
+      protein: 2.6,
+      fiber: 1.8,
+      magnesium: 44,
+      zinc: 0.6,
+      selenium: 5,
+      folate: 9,
+      potassium: 79,
+      carbs: 23,
     },
   },
   {
@@ -427,8 +549,13 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 130,
     nutrients: {
-      protein: 2.5, magnesium: 13, selenium: 7, iron: 0.4, folate: 4,
-      potassium: 26
+      protein: 2.7,
+      magnesium: 13,
+      selenium: 7,
+      iron: 0.4,
+      folate: 4,
+      potassium: 26,
+      carbs: 28,
     },
   },
   {
@@ -441,8 +568,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 90,
     nutrients: {
-      fiber: 2, magnesium: 23, vitaminB12: 0, iron: 0.8, zinc: 0.4, potassium: 421,
-      vitaminC: 20
+      fiber: 2,
+      magnesium: 23,
+      vitaminB12: 0,
+      iron: 0.8,
+      zinc: 0.4,
+      potassium: 421,
+      vitaminC: 20,
+      carbs: 20,
     },
   },
   {
@@ -455,9 +588,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 100,
     nutrients: {
-      fiber: 3, magnesium: 27, iron: 0.7, calcium: 38, vitaminA: 709,
+      fiber: 3,
+      magnesium: 27,
+      iron: 0.7,
+      calcium: 38,
+      vitaminA: 709,
       potassium: 337,
-      vitaminC: 22
+      vitaminC: 22,
+      carbs: 21,
     },
   },
   {
@@ -470,10 +608,17 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 34,
     nutrients: {
-      fiber: 2.6, calcium: 47, iron: 0.7, magnesium: 21, zinc: 0.4, vitaminC: 89, folate: 63,
+      fiber: 2.6,
+      calcium: 47,
+      iron: 0.7,
+      magnesium: 21,
+      zinc: 0.4,
+      vitaminC: 89,
+      folate: 63,
       potassium: 316,
       vitaminA: 31,
-      vitaminE: 0.8
+      vitaminE: 0.8,
+      carbs: 7,
     },
   },
   {
@@ -486,9 +631,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 41,
     nutrients: {
-      fiber: 2.8, magnesium: 12, calcium: 33, iron: 0.3, vitaminA: 835,
+      fiber: 2.8,
+      magnesium: 12,
+      calcium: 33,
+      iron: 0.3,
+      vitaminA: 835,
       potassium: 320,
-      vitaminC: 6
+      vitaminC: 6,
+      carbs: 9.6,
     },
   },
   {
@@ -501,8 +651,13 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 80,
     nutrients: {
-      omega3: 3.4, fiber: 4.1, magnesium: 59, iron: 0.9, vitaminE: 0.6,
-      potassium: 85
+      omega3: 3.4,
+      fiber: 4.1,
+      magnesium: 59,
+      iron: 0.9,
+      vitaminE: 0.6,
+      potassium: 85,
+      carbs: 4.3,
     },
   },
   {
@@ -521,9 +676,11 @@ export const foods: FoodItem[] = [
       calcium: 37,
       magnesium: 25,
       zinc: 0.2,
-      selenium: 0.6, vitaminC: 12,
+      selenium: 0.6,
+      vitaminC: 12,
       folate: 33,
-      potassium: 209
+      potassium: 209,
+      carbs: 7,
     },
   },
   {
@@ -536,15 +693,17 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 40,
     nutrients: {
-      protein: 7,
+      protein: 5,
       fiber: 2.5,
       iron: 1.4,
       calcium: 25,
       magnesium: 21,
       zinc: 0.4,
-      selenium: 2.5, vitaminC: 14,
+      selenium: 2.5,
+      vitaminC: 14,
       folate: 61,
-      potassium: 149
+      potassium: 149,
+      carbs: 6,
     },
   },
   {
@@ -557,10 +716,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 60,
     nutrients: {
-      fiber: 2.4, calcium: 40, magnesium: 10, vitaminC: 70,
+      fiber: 2.4,
+      calcium: 40,
+      magnesium: 10,
+      vitaminC: 70,
       folate: 30,
-      potassium: 181
-    }
+      potassium: 181,
+      carbs: 15,
+    },
   },
   {
     id: "turmeric",
@@ -577,8 +740,9 @@ export const foods: FoodItem[] = [
       magnesium: 8,
       potassium: 50,
       vitaminC: 0.7,
-      vitaminE: 0.3
-    }
+      vitaminE: 0.3,
+      carbs: 1.3,
+    },
   },
   {
     id: "kale",
@@ -590,12 +754,17 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 50,
     nutrients: {
-      iron: 1.5, calcium: 150, magnesium: 33, fiber: 2, vitaminA: 241,
+      iron: 1.5,
+      calcium: 150,
+      magnesium: 33,
+      fiber: 2,
+      vitaminA: 241,
       vitaminC: 93,
       potassium: 228,
       vitaminE: 1.5,
-      folate: 62
-    }
+      folate: 62,
+      carbs: 9,
+    },
   },
   {
     id: "olive_oil",
@@ -606,7 +775,7 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 20,
     regionTags: ["global"],
     calories: 119,
-    nutrients: { omega3: 0.1, vitaminE: 2 }
+    nutrients: { omega3: 0.1, vitaminE: 2 },
   },
   // ─── INDIA ─────────────────────────────────────────────────────
   {
@@ -619,8 +788,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 170,
     nutrients: {
-      protein: 9, fiber: 8, iron: 3.3, magnesium: 36, zinc: 1.3, selenium: 2.8, folate: 181,
-      potassium: 369
+      protein: 9,
+      fiber: 8,
+      iron: 3.3,
+      magnesium: 36,
+      zinc: 1.3,
+      selenium: 2.8,
+      folate: 181,
+      potassium: 369,
+      carbs: 30,
     },
   },
   {
@@ -632,7 +808,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["india"],
     calories: 150,
-    nutrients: { protein: 9, calcium: 104, zinc: 1, vitaminB12: 0.5, vitaminA: 85 },
+    nutrients: {
+      protein: 9,
+      calcium: 104,
+      zinc: 1,
+      vitaminB12: 0.5,
+      vitaminA: 85,
+      carbs: 1.7,
+    },
   },
   {
     id: "roti",
@@ -644,8 +827,32 @@ export const foods: FoodItem[] = [
     regionTags: ["india"],
     calories: 120,
     nutrients: {
-      protein: 3, fiber: 2.5, iron: 0.9, magnesium: 24, zinc: 0.6, folate: 44,
-      potassium: 96
+      protein: 3,
+      fiber: 2.5,
+      iron: 0.9,
+      magnesium: 24,
+      zinc: 0.6,
+      folate: 44,
+      potassium: 96,
+      carbs: 18,
+    },
+  },
+  {
+    id: "milk_tea",
+    name: "Milk Tea",
+    image: "/images/milk_tea.jpg",
+    minQuantity: 1,
+    maxQuantity: 3,
+    maxSuggestionQuantity: 2,
+    regionTags: ["india", "global"],
+    calories: 60,
+    nutrients: {
+      protein: 2,
+      calcium: 80,
+      potassium: 120,
+      magnesium: 8,
+      vitaminB12: 0.4,
+      carbs: 6,
     },
   },
   {
@@ -657,7 +864,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 4,
     regionTags: ["india"],
     calories: 40,
-    nutrients: { protein: 4, fiber: 1, iron: 0.8, magnesium: 14, folate: 10 },
+    nutrients: {
+      protein: 4,
+      fiber: 1,
+      iron: 0.8,
+      magnesium: 14,
+      folate: 10,
+      carbs: 16,
+    },
   },
   {
     id: "dosa",
@@ -668,7 +882,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 2,
     regionTags: ["india"],
     calories: 110,
-    nutrients: { protein: 3, fiber: 1.2, iron: 0.6, magnesium: 18, folate: 8 },
+    nutrients: {
+      protein: 3,
+      fiber: 1.2,
+      iron: 0.6,
+      magnesium: 18,
+      folate: 8,
+      carbs: 20,
+    },
   },
   {
     id: "upma",
@@ -679,7 +900,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 200,
     regionTags: ["india"],
     calories: 200,
-    nutrients: { protein: 4, fiber: 2, iron: 0.9, magnesium: 20, folate: 15 },
+    nutrients: {
+      protein: 4,
+      fiber: 2,
+      iron: 0.9,
+      magnesium: 20,
+      folate: 15,
+      carbs: 33,
+    },
   },
   {
     id: "poha",
@@ -690,7 +918,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["india"],
     calories: 150,
-    nutrients: { protein: 3, fiber: 1.5, iron: 1.2, magnesium: 15, folate: 12 },
+    nutrients: {
+      protein: 3,
+      fiber: 1.5,
+      iron: 1.2,
+      magnesium: 15,
+      folate: 12,
+      carbs: 25,
+    },
   },
   {
     id: "chole",
@@ -702,8 +937,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 240,
     nutrients: {
-      protein: 9, fiber: 7.5, iron: 2.5, magnesium: 48, zinc: 1.5, calcium: 49, folate: 172,
-      potassium: 291
+      protein: 9,
+      fiber: 7.5,
+      iron: 2.5,
+      magnesium: 48,
+      zinc: 1.5,
+      calcium: 49,
+      folate: 172,
+      potassium: 291,
+      carbs: 41,
     },
   },
   {
@@ -716,8 +958,35 @@ export const foods: FoodItem[] = [
     regionTags: ["india"],
     calories: 100,
     nutrients: {
-      protein: 5, calcium: 183, vitaminB12: 0.5, zinc: 0.8, magnesium: 17, vitaminA: 75,
-      potassium: 234
+      protein: 5,
+      calcium: 183,
+      vitaminB12: 0.5,
+      zinc: 0.8,
+      magnesium: 17,
+      vitaminA: 75,
+      potassium: 234,
+      carbs: 7,
+    },
+  },
+  {
+    id: "roasted_chana",
+    name: "Roasted Chana",
+    image: "/images/roasted_chana.jpg",
+    minQuantity: 30,
+    maxQuantity: 100,
+    maxSuggestionQuantity: 60,
+    regionTags: ["india"],
+    calories: 120,
+    nutrients: {
+      protein: 6,
+      fiber: 5,
+      iron: 1.8,
+      magnesium: 45,
+      zinc: 1.2,
+      selenium: 2,
+      folate: 60,
+      potassium: 250,
+      carbs: 18,
     },
   },
   {
@@ -730,8 +999,12 @@ export const foods: FoodItem[] = [
     regionTags: ["india"],
     calories: 110,
     nutrients: {
-      protein: 8, iron: 1.8, magnesium: 40, folate: 80
-    }
+      protein: 8,
+      iron: 1.8,
+      magnesium: 40,
+      folate: 80,
+      carbs: 22,
+    },
   },
   // ─── US / WESTERN ───────────────────────────────────────────────
   {
@@ -744,8 +1017,14 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 100,
     nutrients: {
-      protein: 15, calcium: 150, vitaminB12: 0.7, zinc: 1, magnesium: 17, potassium: 240,
-      vitaminA: 60
+      protein: 15,
+      calcium: 150,
+      vitaminB12: 0.7,
+      zinc: 1,
+      magnesium: 17,
+      potassium: 240,
+      vitaminA: 60,
+      carbs: 6,
     },
   },
   {
@@ -757,7 +1036,15 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 200,
     regionTags: ["us", "global"],
     calories: 120,
-    nutrients: { protein: 11, calcium: 83, vitaminB12: 0.4, selenium: 9, zinc: 0.5, potassium: 104 },
+    nutrients: {
+      protein: 11,
+      calcium: 83,
+      vitaminB12: 0.4,
+      selenium: 9,
+      zinc: 0.5,
+      potassium: 104,
+      carbs: 3.4,
+    },
   },
   {
     id: "quinoa",
@@ -769,8 +1056,15 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 60,
     nutrients: {
-      protein: 7, fiber: 3, iron: 1.4, magnesium: 64, zinc: 1, selenium: 5, folate: 42,
-      potassium: 172
+      protein: 7,
+      fiber: 3,
+      iron: 1.4,
+      magnesium: 64,
+      zinc: 1,
+      selenium: 5,
+      folate: 42,
+      potassium: 172,
+      carbs: 32,
     },
   },
   {
@@ -783,8 +1077,15 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 130,
     nutrients: {
-      protein: 9, fiber: 7.5, iron: 2.5, magnesium: 60, zinc: 1.1, calcium: 46, folate: 149,
-      potassium: 355
+      protein: 9,
+      fiber: 7.5,
+      iron: 2.5,
+      magnesium: 60,
+      zinc: 1.1,
+      calcium: 46,
+      folate: 149,
+      potassium: 355,
+      carbs: 30,
     },
   },
   {
@@ -797,8 +1098,15 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 120,
     nutrients: {
-      protein: 9, fiber: 7, iron: 2.6, magnesium: 44, zinc: 1.3, calcium: 50, folate: 130,
-      potassium: 405
+      protein: 9,
+      fiber: 7,
+      iron: 2.6,
+      magnesium: 44,
+      zinc: 1.3,
+      calcium: 50,
+      folate: 130,
+      potassium: 405,
+      carbs: 23,
     },
   },
   {
@@ -811,8 +1119,13 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 190,
     nutrients: {
-      protein: 8, fiber: 1.2, magnesium: 49, zinc: 0.9, vitaminE: 2,
-      folate: 45
+      protein: 8,
+      fiber: 1.2,
+      magnesium: 49,
+      zinc: 0.9,
+      vitaminE: 2,
+      folate: 45,
+      carbs: 6,
     },
   },
   {
@@ -825,9 +1138,14 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 120,
     nutrients: {
-      fiber: 5, magnesium: 29, omega3: 0.1, iron: 0.6, potassium: 485,
+      fiber: 5,
+      magnesium: 29,
+      omega3: 0.1,
+      iron: 0.6,
+      potassium: 485,
       vitaminE: 2,
-      folate: 81
+      folate: 81,
+      carbs: 6.4,
     },
   },
   {
@@ -839,7 +1157,13 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 150,
     regionTags: ["us", "global"],
     calories: 150,
-    nutrients: { protein: 24, zinc: 2.5, selenium: 27, vitaminB12: 1.5, potassium: 239 }
+    nutrients: {
+      protein: 24,
+      zinc: 2.5,
+      selenium: 27,
+      vitaminB12: 1.5,
+      potassium: 239
+    },
   },
   {
     id: "soy_milk",
@@ -851,9 +1175,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 110,
     nutrients: {
-      protein: 7, calcium: 300, vitaminB12: 1.2, magnesium: 25, potassium: 300,
-      vitaminE: 1
-    }
+      protein: 7,
+      calcium: 300,
+      vitaminB12: 1.2,
+      magnesium: 25,
+      potassium: 300,
+      vitaminE: 1,
+      carbs: 10,
+    },
   },
   {
     id: "pear",
@@ -865,9 +1194,12 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 100,
     nutrients: {
-      fiber: 5.5, magnesium: 12, vitaminC: 7,
-      potassium: 116
-    }
+      fiber: 5.5,
+      magnesium: 12,
+      vitaminC: 7,
+      potassium: 116,
+      carbs: 27,
+    },
   },
   {
     id: "beetroot",
@@ -879,9 +1211,13 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 43,
     nutrients: {
-      iron: 0.8, magnesium: 23, fiber: 2.8, folate: 109,
-      potassium: 305
-    }
+      iron: 0.8,
+      magnesium: 23,
+      fiber: 2.8,
+      folate: 109,
+      potassium: 305,
+      carbs: 9.6,
+    },
   },
   {
     id: "dates",
@@ -892,7 +1228,7 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 40,
     regionTags: ["global"],
     calories: 85,
-    nutrients: { iron: 0.9, magnesium: 13, fiber: 3, potassium: 167 }
+    nutrients: { iron: 0.9, magnesium: 13, fiber: 3, potassium: 167, carbs: 22.5 },
   },
   {
     id: "almond_milk",
@@ -904,9 +1240,12 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 40,
     nutrients: {
-      calcium: 300, magnesium: 18, vitaminE: 3,
-      potassium: 170
-    }
+      calcium: 300,
+      magnesium: 18,
+      vitaminE: 3,
+      potassium: 170,
+      carbs: 1.5,
+    },
   },
   {
     id: "sesame_seeds",
@@ -918,9 +1257,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 85,
     nutrients: {
-      calcium: 88, iron: 1.3, magnesium: 32, zinc: 1, vitaminE: 0.3,
-      folate: 25
-    }
+      calcium: 88,
+      iron: 1.3,
+      magnesium: 32,
+      zinc: 1,
+      vitaminE: 0.3,
+      folate: 25,
+      carbs: 3.5,
+    },
   },
   {
     id: "cashews",
@@ -932,9 +1276,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 110,
     nutrients: {
-      protein: 5, magnesium: 82, zinc: 1.6, iron: 1.9, vitaminE: 0.9,
-      folate: 25
-    }
+      protein: 5,
+      magnesium: 82,
+      zinc: 1.6,
+      iron: 1.9,
+      vitaminE: 0.9,
+      folate: 25,
+      carbs: 6,
+    },
   },
   {
     id: "cucumber",
@@ -946,9 +1295,12 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 15,
     nutrients: {
-      fiber: 1.5, magnesium: 13, vitaminC: 3,
-      potassium: 147
-    }
+      fiber: 1.5,
+      magnesium: 13,
+      vitaminC: 3,
+      potassium: 147,
+      carbs: 3.6,
+    },
   },
   {
     id: "bell_pepper",
@@ -960,11 +1312,15 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 30,
     nutrients: {
-      fiber: 2.1, magnesium: 12, iron: 0.5, vitaminC: 128,
+      fiber: 2.1,
+      magnesium: 12,
+      iron: 0.5,
+      vitaminC: 128,
       vitaminA: 157,
       folate: 46,
-      potassium: 211
-    }
+      potassium: 211,
+      carbs: 6,
+    },
   },
   {
     id: "peas",
@@ -979,9 +1335,11 @@ export const foods: FoodItem[] = [
       protein: 5,
       fiber: 5,
       iron: 1.5,
-      magnesium: 33, folate: 65,
-      potassium: 244
-    }
+      magnesium: 33,
+      folate: 65,
+      potassium: 244,
+      carbs: 14,
+    },
   },
   {
     id: "cabbage",
@@ -995,10 +1353,12 @@ export const foods: FoodItem[] = [
     nutrients: {
       fiber: 2.5,
       magnesium: 12,
-      iron: 0.5, vitaminC: 36,
+      iron: 0.5,
+      vitaminC: 36,
       folate: 43,
-      potassium: 170
-    }
+      potassium: 170,
+      carbs: 5.8,
+    },
   },
   {
     id: "papaya",
@@ -1013,11 +1373,13 @@ export const foods: FoodItem[] = [
       fiber: 2.5,
       magnesium: 21,
       calcium: 20,
-      iron: 0.4, vitaminC: 60,
+      iron: 0.4,
+      vitaminC: 60,
       vitaminA: 47,
       folate: 37,
-      potassium: 182
-    }
+      potassium: 182,
+      carbs: 16,
+    },
   },
   {
     id: "muskmelon",
@@ -1036,8 +1398,9 @@ export const foods: FoodItem[] = [
       vitaminC: 36,
       vitaminA: 169,
       potassium: 267,
-      folate: 21
-    }
+      folate: 21,
+      carbs: 12,
+    },
   },
   {
     id: "zucchini",
@@ -1049,11 +1412,14 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 17,
     nutrients: {
-      fiber: 1, magnesium: 18, vitaminC: 17,
+      fiber: 1,
+      magnesium: 18,
+      vitaminC: 17,
       potassium: 261,
       vitaminA: 10,
-      folate: 24
-    }
+      folate: 24,
+      carbs: 3.1,
+    },
   },
   {
     id: "lettuce",
@@ -1065,10 +1431,13 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 8,
     nutrients: {
-      fiber: 1.3, magnesium: 13, vitaminA: 166,
+      fiber: 1.3,
+      magnesium: 13,
+      vitaminA: 166,
       folate: 73,
-      potassium: 194
-    }
+      potassium: 194,
+      carbs: 1.5,
+    },
   },
   {
     id: "eggplant",
@@ -1080,9 +1449,13 @@ export const foods: FoodItem[] = [
     regionTags: ["global"],
     calories: 25,
     nutrients: {
-      fiber: 3, magnesium: 14, iron: 0.2, potassium: 229,
-      folate: 22
-    }
+      fiber: 3,
+      magnesium: 14,
+      iron: 0.2,
+      potassium: 229,
+      folate: 22,
+      carbs: 6,
+    },
   },
   {
     id: "chia_seeds",
@@ -1094,8 +1467,15 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 70,
     nutrients: {
-      omega3: 5, fiber: 5.5, calcium: 179, iron: 1.1, magnesium: 47, zinc: 0.6, potassium: 115,
-      vitaminE: 0.5
+      omega3: 5,
+      fiber: 5.5,
+      calcium: 179,
+      iron: 1.1,
+      magnesium: 47,
+      zinc: 0.6,
+      potassium: 115,
+      vitaminE: 0.5,
+      carbs: 6.3,
     },
   },
   {
@@ -1108,8 +1488,15 @@ export const foods: FoodItem[] = [
     regionTags: ["us", "global"],
     calories: 80,
     nutrients: {
-      protein: 5, fiber: 3.8, iron: 1.8, magnesium: 24, selenium: 14, zinc: 0.8, folate: 60,
-      potassium: 120
+      protein: 5,
+      fiber: 3.8,
+      iron: 1.8,
+      magnesium: 24,
+      selenium: 14,
+      zinc: 0.8,
+      folate: 60,
+      potassium: 120,
+      carbs: 24,
     },
   },
 
@@ -1124,8 +1511,15 @@ export const foods: FoodItem[] = [
     regionTags: ["europe", "global"],
     calories: 260,
     nutrients: {
-      protein: 7, fiber: 4.5, iron: 1.5, magnesium: 36, selenium: 26, zinc: 1.2, folate: 70,
-      potassium: 120
+      protein: 7,
+      fiber: 4.5,
+      iron: 1.5,
+      magnesium: 36,
+      selenium: 26,
+      zinc: 1.2,
+      folate: 70,
+      potassium: 120,
+      carbs: 52,
     },
   },
   {
@@ -1137,7 +1531,15 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 60,
     regionTags: ["europe", "global"],
     calories: 120,
-    nutrients: { protein: 7, calcium: 200, vitaminB12: 0.4, selenium: 4, zinc: 1, vitaminA: 265 },
+    nutrients: {
+      protein: 7,
+      calcium: 200,
+      vitaminB12: 0.4,
+      selenium: 4,
+      zinc: 1,
+      vitaminA: 265,
+      carbs: 0.4,
+    },
   },
   {
     id: "mozzarella",
@@ -1148,7 +1550,14 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 100,
     regionTags: ["europe", "global"],
     calories: 140,
-    nutrients: { protein: 7, calcium: 186, zinc: 1.1, vitaminB12: 0.5, vitaminA: 179 },
+    nutrients: {
+      protein: 7,
+      calcium: 186,
+      zinc: 1.1,
+      vitaminB12: 0.5,
+      vitaminA: 179,
+      carbs: 1.2,
+    },
   },
   {
     id: "plain_yogurt",
@@ -1160,8 +1569,14 @@ export const foods: FoodItem[] = [
     regionTags: ["europe", "global"],
     calories: 90,
     nutrients: {
-      protein: 6, calcium: 190, vitaminB12: 0.6, magnesium: 17, zinc: 0.9, vitaminA: 90,
-      potassium: 240
+      protein: 6,
+      calcium: 190,
+      vitaminB12: 0.6,
+      magnesium: 17,
+      zinc: 0.9,
+      vitaminA: 90,
+      potassium: 240,
+      carbs: 7,
     },
   },
   {
@@ -1174,8 +1589,15 @@ export const foods: FoodItem[] = [
     regionTags: ["europe", "global"],
     calories: 22,
     nutrients: {
-      vitaminD: 2, selenium: 9, zinc: 0.5, iron: 0.5, fiber: 1, protein: 3, potassium: 318,
-      folate: 17
+      vitaminD: 2,
+      selenium: 9,
+      zinc: 0.5,
+      iron: 0.5,
+      fiber: 1,
+      protein: 3,
+      potassium: 318,
+      folate: 17,
+      carbs: 3.3,
     },
   },
 
@@ -1190,8 +1612,36 @@ export const foods: FoodItem[] = [
     regionTags: ["india", "asia"],
     calories: 170,
     nutrients: {
-      protein: 26, fiber: 3, iron: 4, calcium: 60, magnesium: 60, zinc: 1.5, potassium: 350,
-      folate: 90
+      protein: 18,
+      fiber: 3,
+      iron: 4,
+      calcium: 60,
+      magnesium: 60,
+      zinc: 1.5,
+      potassium: 350,
+      folate: 90,
+      carbs: 16,
+    },
+  },
+  {
+    id: "sattu",
+    name: "Sattu (Roasted Gram Flour)",
+    image: "/images/sattu.jpg",
+    minQuantity: 30,
+    maxQuantity: 100,
+    maxSuggestionQuantity: 60,
+    regionTags: ["india"],
+    calories: 120,
+    nutrients: {
+      protein: 6,
+      fiber: 4,
+      iron: 1.5,
+      magnesium: 35,
+      zinc: 1,
+      selenium: 2,
+      folate: 40,
+      potassium: 200,
+      carbs: 19.5,
     },
   },
   {
@@ -1204,8 +1654,15 @@ export const foods: FoodItem[] = [
     regionTags: ["asia", "global"],
     calories: 190,
     nutrients: {
-      protein: 19, calcium: 111, iron: 2.1, magnesium: 81, zinc: 1.7, vitaminB12: 0.1, potassium: 412,
-      folate: 24
+      protein: 19,
+      calcium: 111,
+      iron: 2.1,
+      magnesium: 81,
+      zinc: 1.7,
+      vitaminB12: 0.1,
+      potassium: 412,
+      folate: 24,
+      carbs: 9,
     },
   },
   {
@@ -1218,10 +1675,15 @@ export const foods: FoodItem[] = [
     regionTags: ["asia"],
     calories: 15,
     nutrients: {
-      calcium: 105, iron: 0.8, magnesium: 19, fiber: 1, vitaminC: 45,
+      calcium: 105,
+      iron: 0.8,
+      magnesium: 19,
+      fiber: 1,
+      vitaminC: 45,
       vitaminA: 223,
       folate: 66,
-      potassium: 252
+      potassium: 252,
+      carbs: 2.2,
     },
   },
   {
@@ -1234,8 +1696,16 @@ export const foods: FoodItem[] = [
     regionTags: ["asia"],
     calories: 120,
     nutrients: {
-      protein: 11, fiber: 4.5, iron: 2.3, calcium: 60, magnesium: 64, zinc: 1.4, omega3: 0.6, folate: 311,
-      potassium: 436
+      protein: 11,
+      fiber: 4.5,
+      iron: 2.3,
+      calcium: 60,
+      magnesium: 64,
+      zinc: 1.4,
+      omega3: 0.6,
+      folate: 311,
+      potassium: 436,
+      carbs: 9,
     },
   },
   {
@@ -1247,11 +1717,21 @@ export const foods: FoodItem[] = [
     maxSuggestionQuantity: 40,
     regionTags: ["asia"],
     calories: 40,
-    nutrients: { protein: 2.5, iron: 0.7, calcium: 24, zinc: 0.6, selenium: 3, potassium: 57 },
+    nutrients: {
+      protein: 2.5,
+      iron: 0.7,
+      calcium: 24,
+      zinc: 0.6,
+      selenium: 3,
+      potassium: 57,
+      carbs: 5.2,
+    },
   },
 ];
 
-export const calculateCaloriesRequirement = (profile: UserProfile | null): number => {
+export const calculateCaloriesRequirement = (
+  profile: UserProfile | null,
+): number => {
   if (!profile) return 0;
 
   const height = profile.height || 170;
@@ -1264,18 +1744,21 @@ export const calculateCaloriesRequirement = (profile: UserProfile | null): numbe
   }
 
   const activityFactors: Record<string, number> = {
-    "Sedentary": 1.2,
+    Sedentary: 1.2,
     "Light activity": 1.375,
     "Moderate activity": 1.55,
-    "Active": 1.725,
-    "Very active": 1.9
+    Active: 1.725,
+    "Very active": 1.9,
   };
 
   const factor = activityFactors[profile.activityLevel] || 1.2;
   return Math.round(bmr * factor);
 };
 
-export const calculateRequirement = (nutrientId: string, profile: UserProfile | null): number => {
+export const calculateRequirement = (
+  nutrientId: string,
+  profile: UserProfile | null,
+): number => {
   if (!profile) return 0;
 
   const nutrient = nutrients.find((n) => n.id === nutrientId);
@@ -1303,36 +1786,41 @@ export const calculateRequirement = (nutrientId: string, profile: UserProfile | 
 
 // Map country name -> region tag used in food data
 export const COUNTRY_REGION_MAP: Record<string, string> = {
-  "India": "india",
+  India: "india",
   "United States": "us",
   "United Kingdom": "uk",
-  "Canada": "canada",
-  "Australia": "australia",
-  "Germany": "europe",
-  "France": "europe",
-  "Italy": "europe",
-  "Spain": "europe",
-  "Netherlands": "europe",
-  "Japan": "japan",
-  "China": "china",
+  Canada: "canada",
+  Australia: "australia",
+  Germany: "europe",
+  France: "europe",
+  Italy: "europe",
+  Spain: "europe",
+  Netherlands: "europe",
+  Japan: "japan",
+  China: "china",
   "South Korea": "korea",
-  "Singapore": "asia",
-  "UAE": "asia",
-  "Other": "global",
+  Singapore: "asia",
+  UAE: "asia",
+  Other: "global",
 };
 
 export const COUNTRIES = Object.keys(COUNTRY_REGION_MAP);
 
 // Get foods filtered by user's country
 export const getRegionFoods = (country?: string): FoodItem[] => {
-  if (!country) return foods.filter(f => f.regionTags.includes("global"));
+  if (!country) return foods.filter((f) => f.regionTags.includes("global"));
   const tag = COUNTRY_REGION_MAP[country];
-  if (!tag) return foods.filter(f => f.regionTags.includes("global"));
-  return foods.filter(f => f.regionTags.includes("global") || f.regionTags.includes(tag));
+  if (!tag) return foods.filter((f) => f.regionTags.includes("global"));
+  return foods.filter(
+    (f) => f.regionTags.includes("global") || f.regionTags.includes(tag),
+  );
 };
 
 // Get foods relevant to a specific nutrient
-export const getFoodsForNutrient = (nutrientId: string, country?: string): FoodItem[] => {
+export const getFoodsForNutrient = (
+  nutrientId: string,
+  country?: string,
+): FoodItem[] => {
   const regionFoods = getRegionFoods(country);
   return regionFoods.filter((f) => (f.nutrients[nutrientId] ?? 0) > 0);
 };
@@ -1347,7 +1835,7 @@ export const getNutrientSuggestions = (
   nutrientId: string,
   remaining: number,
   currentQuantities: Record<string, number>,
-  country?: string
+  country?: string,
 ): Suggestion[] => {
   const relevant = getFoodsForNutrient(nutrientId, country);
 
@@ -1369,21 +1857,26 @@ export const getNutrientSuggestions = (
       let servingsNeeded = remaining / perServing;
 
       // Apply safety cap FIRST
-      servingsNeeded = Math.min(servingsNeeded, capacityAvailable / food.minQuantity);
+      servingsNeeded = Math.min(
+        servingsNeeded,
+        capacityAvailable / food.minQuantity,
+      );
 
       // Quantity for rounding
       let rawQty = servingsNeeded * food.minQuantity;
 
       // Apply realistic rounding
-      if (food.id === 'egg' || food.id === 'banana') {
+      if (food.id === "egg" || food.id === "banana") {
         rawQty = Math.ceil(servingsNeeded);
-      } else if (['paneer', 'tofu', 'dal', 'spinach', 'salmon'].includes(food.id)) {
+      } else if (
+        ["paneer", "tofu", "dal", "spinach", "salmon"].includes(food.id)
+      ) {
         rawQty = Math.round(rawQty / 25) * 25;
-      } else if (food.id === 'oats') {
+      } else if (food.id === "oats") {
         rawQty = Math.round(rawQty / 10) * 10;
-      } else if (food.id === 'milk') {
+      } else if (food.id === "milk") {
         rawQty = Math.round(rawQty / 100) * 100;
-      } else if (food.id === 'chicken') {
+      } else if (food.id === "chicken") {
         rawQty = Math.round(rawQty / 50) * 50;
       } else {
         rawQty = Math.round(rawQty / 5) * 5;
@@ -1397,11 +1890,19 @@ export const getNutrientSuggestions = (
         food,
         neededServings: finalNeededServings,
         density: perServing,
-        meetsGoal: (finalQty * (perServing / food.minQuantity)) >= remaining * 0.95 // almost completes
+        meetsGoal:
+          finalQty * (perServing / food.minQuantity) >= remaining * 0.95, // almost completes
       };
     })
-    .filter((s): s is (Suggestion & { density: number; meetsGoal: boolean }) => s !== null && s.neededServings > 0)
+    .filter(
+      (s): s is Suggestion & { density: number; meetsGoal: boolean } =>
+        s !== null && s.neededServings > 0,
+    )
     .sort((a, b) => b.density - a.density)
     .slice(0, 3)
-    .map(({ food, neededServings, meetsGoal }) => ({ food, neededServings, meetsGoal }));
+    .map(({ food, neededServings, meetsGoal }) => ({
+      food,
+      neededServings,
+      meetsGoal,
+    }));
 };

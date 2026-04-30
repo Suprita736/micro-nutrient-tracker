@@ -50,14 +50,45 @@ const Onboarding = () => {
     const reset = useTrackingStore.getState().reset;
     reset();
 
-    // get logged in user from supabase
-    const { data } = await supabase.auth.getUser();
+    const {
+      data: { user },
+      error: userError,
+    } = await supabase.auth.getUser();
 
-    if (!data.user) return; // Add simple safeguard
+    if (userError || !user) {
+      console.error("User not found", userError);
+      return;
+    }
 
-    const newProfile = {
-      id: data.user.id,
-      email: data.user.email,
+    console.log("Auth UID:", user?.id);
+
+    const { data: session } = await supabase.auth.getSession();
+    console.log("Session:", session);
+
+    const payload = {
+      id: user.id, // MUST match auth.uid()
+      email: user.email,
+      name: name.trim(),
+      age: Number(age),
+      weight: Number(weight),
+      height: Number(height),
+      gender,
+      activity_level: activityLevel,
+      country,
+    };
+
+    const { error } = await supabase.from("profiles").upsert(payload);
+
+    if (error) {
+      console.error("Profile insert failed:", error);
+      setErrors({ form: `Failed to save profile: ${error.message}` });
+      return;
+    }
+
+    // Update local state to immediately reflect the profile
+    useTrackingStore.getState().setUserProfile({
+      id: user.id,
+      email: user.email,
       name: name.trim(),
       age: Number(age),
       weight: Number(weight),
@@ -65,25 +96,9 @@ const Onboarding = () => {
       gender: gender as "Male" | "Female" | "Other",
       activityLevel,
       country,
-    };
-
-    // save profile locally (zustand)
-    useTrackingStore.getState().setUserProfile(newProfile);
-
-    // save profile in supabase database
-    await supabase.from("profiles").upsert({
-      id: data.user.id,
-      email: data.user.email,
-      name: name.trim(),
-      age: Number(age),
-      weight: Number(weight),
-      height: Number(height),
-      gender,
-      activity_level: activityLevel,
-      country
     });
 
-    navigate("/dashboard", { replace: true });
+    navigate("/dashboard");
   };
 
   const inputClass =
@@ -97,6 +112,11 @@ const Onboarding = () => {
         <h2 className="font-serif text-2xl font-semibold text-card-foreground mb-6">
           Enter your details
         </h2>
+        {errors.form && (
+          <div className="mb-4 p-3 bg-destructive/10 text-destructive text-sm font-sans border border-destructive/20">
+            {errors.form}
+          </div>
+        )}
         <form onSubmit={handleSubmit} className="space-y-5">
           <Field label="Full Name" error={errors.name}>
             <input

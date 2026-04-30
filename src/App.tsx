@@ -19,7 +19,7 @@ import UpdatePassword from "@/pages/UpdatePassword";
 import Terms from "@/pages/Terms";
 import Privacy from "@/pages/Privacy";
 import { useTrackingStore } from "@/store/trackingStore";
-
+import Intro from "@/pages/Intro";
 import { supabase } from "@/lib/supabaseClient";
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
@@ -34,25 +34,26 @@ const AppInit = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     let mounted = true;
-    async function init() {
-      const { data: { session } } = await supabase.auth.getSession();
 
-      if (!session) {
-        if (mounted) {
-          setLoading(false);
-          // Only allow landing, login, signup, and recovery/legal pages when not logged in
-          const publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/update-password', '/terms', '/privacy'];
-          if (!publicRoutes.includes(location.pathname)) {
-            navigate('/login', { replace: true });
-          }
+    async function fetchProfile(userId: string) {
+      console.log("-> Starting fetchProfile for", userId);
+      try {
+        console.log("-> Awaiting supabase.from...");
+        const res = await supabase.from('profiles').select('*').eq('id', userId).maybeSingle();
+        console.log("-> fetchProfile query completed!");
+        
+        const { data: profile, error } = res;
+        console.log("User ID:", userId);
+        console.log("Profile:", profile);
+        console.log("Profile error:", error);
+
+        if (!mounted) {
+          console.log("-> Component unmounted, skipping state update");
+          return;
         }
-        return;
-      }
 
-      const { data: profile } = await supabase.from('profiles').select('*').eq('id', session.user.id).single();
-
-      if (mounted) {
         if (profile) {
+          console.log("-> Setting user profile in Zustand");
           setUserProfile({
             id: profile.id,
             email: profile.email,
@@ -64,29 +65,98 @@ const AppInit = ({ children }: { children: React.ReactNode }) => {
             activityLevel: profile.activity_level,
             country: profile.country
           });
-          // Redirect to dashboard if they land on public routes or already completed onboarding
-          // But allow them to stay on update-password if they have a session
-          const publicRoutes = ['/', '/login', '/signup', '/onboarding'];
+          
+          const publicRoutes = ['/', '/login', '/signup'];
           if (publicRoutes.includes(location.pathname)) {
+            console.log("-> Redirecting to dashboard from public route");
             navigate('/dashboard', { replace: true });
           }
         } else {
-          // If no profile, force them to onboarding
+          console.log("-> No profile found - directing to onboarding", location.pathname);
           if (location.pathname !== '/onboarding') {
             navigate('/onboarding', { replace: true });
           }
         }
-        setLoading(false);
+      } catch (err) {
+        console.error("-> fetchProfile error:", err);
+      } finally {
+        console.log("-> fetchProfile finally block, setting loading false");
+        if (mounted) setLoading(false);
+      }
+    }
+
+    async function init() {
+      console.log("-> init() started");
+      try {
+        console.log("-> Awaiting getSession()...");
+        const { data: { session }, error: sessionError } = await supabase.auth.getSession();
+        console.log("-> getSession() completed. Session:", !!session);
+        
+        if (sessionError) {
+           console.error("Auth session error:", sessionError);
+        }
+
+        if (!session) {
+          if (mounted) {
+            console.log("-> No session, redirecting to login");
+            const publicRoutes = ['/', '/login', '/signup', '/forgot-password', '/update-password', '/terms', '/privacy'];
+            if (!publicRoutes.includes(location.pathname)) {
+               navigate('/login', { replace: true });
+            }
+            setLoading(false);
+          }
+          return;
+        }
+
+        console.log("-> Session found, calling fetchProfile...");
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user) {
+          await fetchProfile(user.id);
+        }
+      } catch (err) {
+        console.error("-> init error:", err);
+        if (mounted) setLoading(false);
       }
     }
 
     init();
 
-    return () => { mounted = false; };
-  }, [navigate, location.pathname]);
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("-> Auth state change event triggered:", event);
+      if (!mounted) return;
+      if (event === 'SIGNED_IN' && session) {
+        console.log("-> Auth SIGNED_IN, calling fetchProfile...");
+        // Do not await here to avoid blocking other handlers though it doesn't matter much
+        supabase.auth.getUser().then(({ data: { user } }) => {
+          if (user) fetchProfile(user.id);
+        });
+      } else if (event === 'SIGNED_OUT') {
+        console.log("-> Auth SIGNED_OUT, routing to login");
+        useTrackingStore.getState().setUserProfile(null);
+        navigate('/login', { replace: true });
+      }
+    });
+
+    // Fallback un-hang mechanism:
+    const timeoutMsg = setTimeout(() => {
+       console.log("-> 3-SECOND TIMEOUT FALLBACK HIT. Forcing loading false.");
+       if (mounted) setLoading(false);
+    }, 3000);
+
+    return () => { 
+      console.log("-> AppInit UNMOUNTING");
+      mounted = false; 
+      clearTimeout(timeoutMsg);
+      subscription.unsubscribe();
+    };
+  }, [navigate]);
 
   if (loading) {
-    return <div className="min-h-screen bg-background" />;
+    return (
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4">
+         <div className="text-muted-foreground font-sans animate-pulse mb-4">Loading MicroTrack...</div>
+      </div>
+    );
   }
 
   return <>{children}</>;
@@ -118,6 +188,7 @@ const App = () => (
                 <Route path="/terms" element={<Terms />} />
                 <Route path="/privacy" element={<Privacy />} />
                 <Route path="/onboarding" element={<Onboarding />} />
+                <Route path="/intro" element={<Intro />} />
                 <Route
                   path="/dashboard"
                   element={

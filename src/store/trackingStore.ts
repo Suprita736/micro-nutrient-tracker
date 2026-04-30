@@ -153,30 +153,56 @@ export const useTrackingStore = create<TrackingState>()(
             return;
           }
 
-          // 4. Manual snapshots (matching user expectation for state.totals/requirements)
-          const totalsSnapshot: Record<string, { current: number; required: number; unit: string }> = {};
+          // 4. Fetch existing record before saving
+          const { data: existing, error: existingError } = await supabase
+            .from("history")
+            .select("*")
+            .eq("user_id", user.id)
+            .eq("date_key", todayKey)
+            .maybeSingle();
+
+          if (existingError) {
+             console.error("Error fetching existing record:", existingError);
+             return;
+          }
+
+          // 5. Merge foods (DO NOT overwrite). Add to existing quantity.
+          const mergedFoods: Record<string, number> = { ...(existing?.foods || {}) };
+          for (const [foodId, qty] of Object.entries(foodQuantities)) {
+            mergedFoods[foodId] = (mergedFoods[foodId] || 0) + (qty as number);
+          }
+
+          // 6. Recalculate nutrients from merged foods
+          const recalculatedNutrients: Record<string, { current: number; required: number; unit: string }> = {};
           nutrients.forEach((n) => {
-            totalsSnapshot[n.id] = {
-              current: getNutrientTotal(n.id),
+            let total = 0;
+            foods.forEach((food) => {
+              const qty = mergedFoods[food.id] ?? 0;
+              if (n.id === "calories") {
+                total += (food.calories ?? 0) * qty;
+              } else {
+                total += (food.nutrients[n.id] ?? 0) * qty;
+              }
+            });
+            recalculatedNutrients[n.id] = {
+              current: total,
               required: getNutrientRequirement(n.id),
               unit: n.unit,
             };
           });
 
-          const requirementsSnapshot = totalsSnapshot; // In this app requirements are stored per entry
-
           const payload = {
             user_id: user.id,
             date: new Date(),
             date_key: todayKey,
-            nutrient_totals: totalsSnapshot,
-            requirements: requirementsSnapshot,
-            foods: foodQuantities
+            nutrient_totals: recalculatedNutrients,
+            requirements: existing?.requirements || recalculatedNutrients,
+            foods: mergedFoods
           };
 
           console.log("Payload:", payload);
 
-          // 5. Upsert to history table
+          // 7. Upsert to history table
           const { error: upsertError } = await supabase
             .from("history")
             .upsert(payload, {

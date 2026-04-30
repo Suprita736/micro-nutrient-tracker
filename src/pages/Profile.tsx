@@ -65,12 +65,12 @@ const Profile = () => {
       return;
     }
 
-    const { data } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
 
-    if (data.user) {
+    if (user) {
       await supabase.from("profiles").upsert({
-        id: data.user.id,
-        email: data.user.email,
+        id: user.id,
+        email: user.email,
         name: userProfile.name,
         age: ageNum,
         weight: weightNum,

@@ -1,0 +1,9 @@
+{
+  "tasks": {
+    "dev": "deno run --allow-all supabase/functions/parse-food/index.ts"
+  },
+  "imports": {
+    "std/": "https://deno.land/std@0.168.0/"
+  },
+  "exclude": ["node_modules", "dist"]
+}
