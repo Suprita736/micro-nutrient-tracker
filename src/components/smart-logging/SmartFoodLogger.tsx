@@ -9,7 +9,8 @@ import { toast } from "sonner";
 interface ParsedFood {
   food: string;
   quantity: number;
-  unit: "servings" | "grams";
+  unit: "piece" | "grams" | "servings";
+  explicit?: boolean;
 }
 
 interface DetectedFood {
@@ -23,7 +24,9 @@ export const SmartFoodLogger = () => {
   const [isListening, setIsListening] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [detectedFoods, setDetectedFoods] = useState<DetectedFood[] | null>(null);
+  const [suggestions, setSuggestions] = useState<FoodItem[]>([]);
   const updateFoodQuantity = useTrackingStore((s) => s.updateFoodQuantity);
+  const addFoodQuantity = useTrackingStore((s) => s.addFoodQuantity);
 
   const recognitionRef = useRef<any>(null);
 
@@ -64,13 +67,31 @@ export const SmartFoodLogger = () => {
       recognitionRef.current?.start();
     }
   };
+  const handleSuggestions = (value: string) => {
+    setText(value);
+
+    if (!value.trim()) {
+      setSuggestions([]);
+      return;
+    }
+
+    const normalized = value.toLowerCase();
+
+    const matches = allFoods
+      .filter((food) =>
+        food.name.toLowerCase().includes(normalized)
+      )
+      .slice(0, 5);
+
+    setSuggestions(matches);
+  };
 
   const handleParse = async (input: string) => {
     if (!input.trim()) return;
 
     setIsLoading(true);
     setDetectedFoods(null);
-
+    setSuggestions([]);
     try {
       const { data, error } = await supabase.functions.invoke("parse-food", {
         body: { text: input },
@@ -99,10 +120,11 @@ export const SmartFoodLogger = () => {
 
     items.forEach((item) => {
       // ✅ 7. Ensure Clean Data
-      const cleanItem = {
+      const cleanItem: ParsedFood = {
         food: (item.food || "Unknown").trim(),
         quantity: item.quantity || 1,
-        unit: item.unit || "piece"
+        unit: item.unit || "piece",
+        explicit: item.explicit || false,
       };
 
       const normalizedInput = normalizeFoodString(cleanItem.food);
@@ -140,15 +162,28 @@ export const SmartFoodLogger = () => {
       }
 
       if (food) {
-        // ✅ 2 & 3. Treat Parsed Quantity as Servings + Correct Calculation
-        const servings = cleanItem.quantity;
+        let quantityFactor = 1;
 
-        // Keep UI clean, avoid showing "1 grams"
-        cleanItem.quantity = servings;
-        cleanItem.unit = "servings";
+        // Piece foods (2 eggs, 3 bananas)
+        if (cleanItem.unit === "piece") {
+          quantityFactor = cleanItem.quantity;
 
-        const quantityFactor = servings;
+          cleanItem.unit = "servings";
+        }
 
+        // Explicit grams (50g rice, 120g paneer)
+        else if (cleanItem.explicit) {
+          quantityFactor = cleanItem.quantity / food.minQuantity;
+
+          cleanItem.unit = "grams";
+        }
+
+        // Default serving (rice, oats, paneer)
+        else {
+          quantityFactor = cleanItem.quantity;
+
+          cleanItem.unit = "servings";
+        }
         // ✅ 8. Debug Logging
         console.log(`[SmartFoodLogger] Matched "${item.food}" -> "${food.name}" | Parsed Qty: ${item.quantity} ${item.unit} | Scaled Servings: ${quantityFactor}`);
 
@@ -175,7 +210,7 @@ export const SmartFoodLogger = () => {
     if (!detectedFoods) return;
 
     detectedFoods.forEach((item) => {
-      updateFoodQuantity(item.matchedFood.id, item.quantityFactor);
+      addFoodQuantity(item.matchedFood.id, item.quantityFactor);
     });
 
     setDetectedFoods(null);
@@ -203,7 +238,7 @@ export const SmartFoodLogger = () => {
             <input
               type="text"
               value={text}
-              onChange={(e) => setText(e.target.value)}
+              onChange={(e) => handleSuggestions(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && handleParse(text)}
               placeholder="What did you eat? (e.g. '2 eggs and banana')"
               className="w-full bg-background border border-border px-4 py-3 pr-24 rounded-none font-sans text-sm outline-none focus:border-primary transition-colors h-12"
@@ -233,6 +268,28 @@ export const SmartFoodLogger = () => {
           <p className="text-[11px] text-muted-foreground italic font-sans px-1">
             Try: "I ate 2 eggs and oats" or "1 roti and banana"
           </p>
+          {suggestions.length > 0 && !detectedFoods && (
+            <div className="border border-border bg-card mt-1">
+              {suggestions.map((food) => (
+                <button
+                  key={food.id}
+                  onClick={() => {
+                    setText(food.name);
+                    setSuggestions([]);
+                  }}
+                  className="w-full text-left px-3 py-2 text-sm hover:bg-muted transition-colors border-b border-border last:border-0"
+                >
+                  {food.name}
+                </button>
+              ))}
+            </div>
+          )}
+          {isLoading && (
+            <div className="flex items-center gap-2 text-sm text-primary px-1">
+              <Loader2 size={14} className="animate-spin" />
+              <span>Detecting foods...</span>
+            </div>
+          )}
         </div>
       ) : (
         <div className="animate-in fade-in slide-in-from-top-2 duration-300">
@@ -257,7 +314,7 @@ export const SmartFoodLogger = () => {
                 </div>
                 <div className="text-right">
                   <p className="text-xs font-bold text-primary">
-                    {item.quantityFactor.toFixed(1)} {item.original.unit === 'servings' ? 'servings' : 'equiv'}
+                    {item.quantityFactor.toFixed(1)} {item.original.unit === 'piece' ? 'piece' : 'equiv'}
                   </p>
                 </div>
               </div>
@@ -299,7 +356,7 @@ function simulateAIParsing(input: string): ParsedFood[] {
         results.push({
           food: food.name,
           quantity: qty,
-          unit: "servings"
+          unit: "piece"
         });
       }
     }

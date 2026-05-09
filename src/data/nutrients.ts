@@ -1441,7 +1441,7 @@ export const foods: FoodItem[] = [
   },
   {
     id: "eggplant",
-    name: "Eggplant",
+    name: "Brinjal",
     image: "/images/eggplant.jpg",
     minQuantity: 100,
     maxQuantity: 200,

@@ -7,6 +7,10 @@ interface FoodQuantities {
   [foodId: string]: number;
 }
 
+interface SupplementQuantities {
+  [supplementId: string]: number;
+}
+
 export interface HistoryEntry {
   userId: string;
   dateKey?: string;
@@ -15,23 +19,47 @@ export interface HistoryEntry {
   streakSnapshot?: number;
   nutrients: Record<string, { current: number; required: number; unit: string }>;
   foods: FoodQuantities;
+  supplements: SupplementQuantities;
 }
 
 interface TrackingState {
   userProfile: UserProfile | null;
+
   foodQuantities: FoodQuantities;
+
+  supplements: SupplementQuantities;
+
   history: HistoryEntry[];
+
   currentStreak: number;
   longestStreak: number;
+
   setHistory: (history: HistoryEntry[]) => void;
   setUserProfile: (profile: UserProfile) => void;
   updateProfile: (profile: UserProfile) => void;
-  updateFoodQuantity: (foodId: string, quantity: number) => void;
+
+  updateFoodQuantity: (
+    foodId: string,
+    quantity: number
+  ) => void;
+
+  addFoodQuantity: (
+    foodId: string,
+    quantity: number
+  ) => void;
+
+  updateSupplement: (
+    id: string,
+    amount: number
+  ) => void;
+
   getCaloriesTotal: () => number;
   getNutrientTotal: (nutrientId: string) => number;
   getNutrientRequirement: (nutrientId: string) => number;
+
   saveDay: () => Promise<void>;
   migrateLegacyHistory: (userId: string) => void;
+
   reset: () => void;
   resetFoodQuantities: () => void;
   logout: () => void;
@@ -87,6 +115,7 @@ export const useTrackingStore = create<TrackingState>()(
     (set, get) => ({
       userProfile: null,
       foodQuantities: {},
+      supplements: {},
       history: [],
       currentStreak: 0,
       longestStreak: 0,
@@ -107,6 +136,22 @@ export const useTrackingStore = create<TrackingState>()(
             [foodId]: Math.max(0, quantity),
           },
         })),
+      addFoodQuantity: (foodId, quantity) =>
+        set((state) => ({
+          foodQuantities: {
+            ...state.foodQuantities,
+            [foodId]:
+              (state.foodQuantities[foodId] || 0) +
+              Math.max(0, quantity),
+          },
+        })),
+      updateSupplement: (id, amount) =>
+        set((state) => ({
+          supplements: {
+            ...state.supplements,
+            [id]: Math.max(0, amount),
+          },
+        })),
       getCaloriesTotal: () => {
         const { foodQuantities } = get();
         let total = 0;
@@ -117,12 +162,31 @@ export const useTrackingStore = create<TrackingState>()(
         return total;
       },
       getNutrientTotal: (nutrientId) => {
-        const { foodQuantities } = get();
+        const { foodQuantities, supplements } = get();
+
         let total = 0;
+
+        // Food nutrients
         foods.forEach((food) => {
           const qty = foodQuantities[food.id] ?? 0;
+
           total += (food.nutrients[nutrientId] ?? 0) * qty;
         });
+
+        // Supplement nutrients
+        let supplementAmount = supplements[nutrientId] || 0;
+
+        // Convert supplement units
+        if (nutrientId === "omega3") {
+          supplementAmount = supplementAmount / 1000; // mg → g
+        }
+
+        if (nutrientId === "vitaminD") {
+          supplementAmount = supplementAmount / 40; // IU → mcg
+        }
+
+        total += supplementAmount;
+
         return total;
       },
       getNutrientRequirement: (nutrientId) => {
@@ -140,7 +204,11 @@ export const useTrackingStore = create<TrackingState>()(
             return;
           }
 
-          const { foodQuantities, getNutrientTotal, getNutrientRequirement } = state;
+          const {
+            foodQuantities,
+            supplements,
+            getNutrientRequirement
+          } = state;
 
           // 2. Local date key
           const todayKey = format(new Date(), "yyyy-MM-dd");
@@ -162,14 +230,22 @@ export const useTrackingStore = create<TrackingState>()(
             .maybeSingle();
 
           if (existingError) {
-             console.error("Error fetching existing record:", existingError);
-             return;
+            console.error("Error fetching existing record:", existingError);
+            return;
           }
 
           // 5. Merge foods (DO NOT overwrite). Add to existing quantity.
           const mergedFoods: Record<string, number> = { ...(existing?.foods || {}) };
           for (const [foodId, qty] of Object.entries(foodQuantities)) {
             mergedFoods[foodId] = (mergedFoods[foodId] || 0) + (qty as number);
+          }
+          const mergedSupplements: Record<string, number> = {
+            ...(existing?.supplements || {}),
+          };
+
+          for (const [supplementId, amount] of Object.entries(supplements)) {
+            mergedSupplements[supplementId] =
+              (mergedSupplements[supplementId] || 0) + (amount as number);
           }
 
           // 6. Recalculate nutrients from merged foods
@@ -184,6 +260,18 @@ export const useTrackingStore = create<TrackingState>()(
                 total += (food.nutrients[n.id] ?? 0) * qty;
               }
             });
+            let supplementAmount =
+              mergedSupplements[n.id] || 0;
+
+            if (n.id === "omega3") {
+              supplementAmount = supplementAmount / 1000; // mg → g
+            }
+
+            if (n.id === "vitaminD") {
+              supplementAmount = supplementAmount / 40; // IU → mcg
+            }
+
+            total += supplementAmount;
             recalculatedNutrients[n.id] = {
               current: total,
               required: getNutrientRequirement(n.id),
@@ -197,7 +285,8 @@ export const useTrackingStore = create<TrackingState>()(
             date_key: todayKey,
             nutrient_totals: recalculatedNutrients,
             requirements: existing?.requirements || recalculatedNutrients,
-            foods: mergedFoods
+            foods: mergedFoods,
+            supplements: mergedSupplements,
           };
 
           console.log("Payload:", payload);
@@ -238,7 +327,8 @@ export const useTrackingStore = create<TrackingState>()(
               year: "numeric"
             }),
             nutrients: item.nutrient_totals,
-            foods: item.foods || {}
+            foods: item.foods || {},
+            supplements: item.supplements || {},
           }));
 
           // 8. Recalculate streak
@@ -249,7 +339,8 @@ export const useTrackingStore = create<TrackingState>()(
             history: mappedHistory,
             currentStreak: streakData.currentStreak,
             longestStreak: streakData.longestStreak,
-            foodQuantities: {} // Reset day progress AFTER successful save
+            foodQuantities: {},
+            supplements: {},
           });
 
           console.log("--- SaveDay Operation Completed Successfully ---");
@@ -265,9 +356,27 @@ export const useTrackingStore = create<TrackingState>()(
           })),
         }));
       },
-      reset: () => set({ foodQuantities: {}, userProfile: null, currentStreak: 0, longestStreak: 0 }),
-      resetFoodQuantities: () => set({ foodQuantities: {} }),
-      logout: () => set({ userProfile: null, foodQuantities: {}, currentStreak: 0, longestStreak: 0 }),
+      reset: () =>
+        set({
+          foodQuantities: {},
+          supplements: {},
+          userProfile: null,
+          currentStreak: 0,
+          longestStreak: 0,
+        }),
+      resetFoodQuantities: () =>
+        set({
+          foodQuantities: {},
+          supplements: {},
+        }),
+      logout: () =>
+        set({
+          userProfile: null,
+          foodQuantities: {},
+          supplements: {},
+          currentStreak: 0,
+          longestStreak: 0,
+        }),
     }),
     {
       name: "microtrack-storage",

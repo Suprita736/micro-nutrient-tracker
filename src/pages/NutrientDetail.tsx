@@ -10,8 +10,10 @@ const NutrientDetail = () => {
   const nutrient = nutrients.find((n) => n.id === id);
   const [searchTerm, setSearchTerm] = useState("");
 
-  const current = useTrackingStore((s) => (id ? s.getNutrientTotal(id) : 0));
-  const required = useTrackingStore((s) => (id ? s.getNutrientRequirement(id) : 0));
+  let current = useTrackingStore((s) => (id ? s.getNutrientTotal(id) : 0));
+  let required = useTrackingStore((s) => (id ? s.getNutrientRequirement(id) : 0));
+
+
   const foodQuantities = useTrackingStore((s) => s.foodQuantities);
   const country = useTrackingStore((s) => s.userProfile?.country);
 
@@ -61,9 +63,8 @@ const NutrientDetail = () => {
         </div>
         <div className="h-2 bg-progress-track w-full overflow-hidden">
           <div
-            className={`h-full transition-all duration-700 ease-out ${
-              current >= required ? "bg-[#2d4a6a]" : "bg-progress"
-            }`}
+            className={`h-full transition-all duration-700 ease-out ${current >= required ? "bg-[#2d4a6a]" : "bg-progress"
+              }`}
             style={{ width: `${pct}%` }}
           />
         </div>
@@ -78,7 +79,7 @@ const NutrientDetail = () => {
             Add these to your daily log to meet your {nutrient.name} goals.
           </p>
         </div>
-        
+
         <div className="relative w-full md:w-64">
           <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
           <input
@@ -111,35 +112,35 @@ const NutrientDetail = () => {
       )}
 
       {remaining > 0 && suggestions.length > 0 && (
-         <div className="mt-16 border-t border-border pt-12">
-           <div className="flex items-center gap-2 mb-6">
-             <Lightbulb size={20} className="text-primary/70" />
-             <h2 className="font-serif text-xl font-semibold text-foreground italic">
-               Suggestions to complete {nutrient.name}
-             </h2>
-           </div>
-           
-           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-             {suggestions.map((s) => (
-               <div key={s.food.id} className="bg-card border border-border p-4 flex items-center gap-4">
-                 <div className="w-12 h-12 bg-muted overflow-hidden flex-shrink-0">
-                    <img 
-                      src={s.food.image} 
-                      alt={s.food.name} 
-                      className="w-full h-full object-cover opacity-80"
-                      onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/64?text=Food")}
-                    />
-                 </div>
-                 <div>
-                   <h4 className="font-serif text-sm font-medium text-foreground">{s.food.name}</h4>
-                   <p className="text-xs font-sans text-muted-foreground mt-0.5">
-                     Add <span className="font-bold text-foreground">{formatNum(s.neededServings * s.food.minQuantity)}{s.food.id === 'egg' || s.food.id === 'banana' ? '' : 'g'}</span>
-                   </p>
-                 </div>
-               </div>
-             ))}
-           </div>
-         </div>
+        <div className="mt-16 border-t border-border pt-12">
+          <div className="flex items-center gap-2 mb-6">
+            <Lightbulb size={20} className="text-primary/70" />
+            <h2 className="font-serif text-xl font-semibold text-foreground italic">
+              Suggestions to complete {nutrient.name}
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {suggestions.map((s) => (
+              <div key={s.food.id} className="bg-card border border-border p-4 flex items-center gap-4">
+                <div className="w-12 h-12 bg-muted overflow-hidden flex-shrink-0">
+                  <img
+                    src={s.food.image}
+                    alt={s.food.name}
+                    className="w-full h-full object-cover opacity-80"
+                    onError={(e) => (e.currentTarget.src = "https://via.placeholder.com/64?text=Food")}
+                  />
+                </div>
+                <div>
+                  <h4 className="font-serif text-sm font-medium text-foreground">{s.food.name}</h4>
+                  <p className="text-xs font-sans text-muted-foreground mt-0.5">
+                    Add <span className="font-bold text-foreground">{formatNum(s.neededServings * s.food.minQuantity)}{s.food.id === 'egg' || s.food.id === 'banana' ? '' : 'g'}</span>
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
       )}
     </div>
   );

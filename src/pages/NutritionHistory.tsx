@@ -61,11 +61,11 @@ const NutritionHistory = () => {
           </p>
           {currentStreak > 0 ? (
             <div className="inline-flex items-center px-3 py-1 bg-primary/10 border border-primary/20 text-primary text-xs tracking-wider uppercase font-sans font-medium">
-                🔥 {currentStreak} day streak
+              🔥 {currentStreak} day streak
             </div>
           ) : (
             <div className="inline-flex items-center px-3 py-1 bg-border/50 text-muted-foreground text-xs uppercase tracking-wider font-sans italic">
-                Log daily to maintain your streak
+              Log daily to maintain your streak
             </div>
           )}
         </div>
@@ -108,9 +108,18 @@ const NutritionHistory = () => {
                 {allNutrients.map((n) => {
                   if (n.id === "calories") return null;
                   const snap = entry.nutrients[n.id];
+                  let current = snap.current;
+
+                  if (n.id === "omega3" && current > 50) {
+                    current = current / 1000;
+                  }
+
+                  if (n.id === "vitaminD" && current > 100) {
+                    current = current / 40;
+                  }
                   if (!snap) return null;
-                  const pct = snap.required > 0 ? Math.min((snap.current / snap.required) * 100, 100) : 0;
-                  const isCompleted = snap.current >= snap.required;
+                  const pct = snap.required > 0 ? Math.min((current / snap.required) * 100, 100) : 0;
+                  const isCompleted = current >= snap.required;
 
                   return (
                     <div key={n.id}>
@@ -124,7 +133,7 @@ const NutritionHistory = () => {
                           )}
                         </div>
                         <span className="text-[10px] font-sans text-muted-foreground">
-                          {formatNum(snap.current)}{snap.unit} / {formatNum(snap.required)}{snap.unit}
+                          {formatNum(current)}{snap.unit} / {formatNum(snap.required)}{snap.unit}
                         </span>
                       </div>
                       <div className="h-1 bg-progress-track w-full overflow-hidden">

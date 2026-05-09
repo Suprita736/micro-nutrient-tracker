@@ -8,6 +8,8 @@ import { supabase } from "@/lib/supabaseClient";
 import { format } from "date-fns";
 import { CaloriesProgress } from "@/components/CaloriesProgress";
 import { SmartFoodLogger } from "@/components/smart-logging/SmartFoodLogger";
+import SupplementCard from "@/components/SupplementCard";
+import { supplements } from "@/data/supplements";
 const Dashboard = () => {
   const getNutrientTotal = useTrackingStore((s) => s.getNutrientTotal);
   const getNutrientRequirement = useTrackingStore((s) => s.getNutrientRequirement);
@@ -16,7 +18,15 @@ const Dashboard = () => {
   const foodQuantities = useTrackingStore((s) => s.foodQuantities);
   const saveDay = useTrackingStore((s) => s.saveDay);
   const setHistory = useTrackingStore((s) => s.setHistory);
-  const hasProgress = Object.values(foodQuantities).some((q) => q > 0);
+  const supplementsState = useTrackingStore((s) => s.supplements);
+
+  const hasFoods = Object.values(foodQuantities)
+    .some((q) => q > 0);
+
+  const hasSupplements = Object.values(supplementsState)
+    .some((q) => q > 0);
+
+  const hasProgress = hasFoods || hasSupplements;
 
   useEffect(() => {
 
@@ -55,7 +65,8 @@ const Dashboard = () => {
             year: "numeric"
           }),
           nutrients: item.nutrient_totals,
-          foods: item.foods || {}
+          foods: item.foods || {},
+          supplements: item.supplements || {},
         }));
 
         setHistory(formattedHistory);
@@ -95,7 +106,9 @@ const Dashboard = () => {
 
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 mb-16">
         {nutrients.filter(n => n.id !== "calories").map((n) => {
-          const current = getNutrientTotal(n.id);
+          let current = getNutrientTotal(n.id);
+
+          // Convert mg → g for omega3 display
           const required = getNutrientRequirement(n.id);
           const pct = required > 0 ? Math.min((current / required) * 100, 100) : 0;
           const isCompleted = required > 0 && current >= required;
@@ -150,7 +163,20 @@ const Dashboard = () => {
           );
         })}
       </div>
+      <div className="mb-16">
+        <h2 className="font-serif text-2xl font-semibold mb-6">
+          Supplements
+        </h2>
 
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {supplements.map((supplement) => (
+            <SupplementCard
+              key={supplement.id}
+              supplement={supplement}
+            />
+          ))}
+        </div>
+      </div>
       <div className="flex flex-col sm:flex-row items-center justify-center gap-4 border-t border-border pt-12">
         <Button
           variant="hero"
